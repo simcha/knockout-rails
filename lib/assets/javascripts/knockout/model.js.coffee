@@ -416,10 +416,15 @@ class Model extends Module
 
     .done (resp, status, xhr)->
         if resp?
-          returning=[]
-          for obj in resp
-             returning.add(new this(obj))
-        all_list returning
+          if Object.prototype.toString.call(resp) == '[object Array]'
+            returning=[]
+            for obj in resp
+               returning.add(new this(obj))
+            all_list returning
+          else
+            all_list resp
+        else
+          all_list null
         @trigger('allSuccess', resp, xhr, status)
 
     return all_list

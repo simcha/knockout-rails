@@ -155,6 +155,14 @@ describe "Model", ->
         status: 200
         responseText: JSON.stringify expected_list
       expect(JSON.stringify list()).toEqual(JSON.stringify expected_list)
+    it "should call the function given when no array is returned but object", ->
+      expected_object = {total: 2, entries: [new Page(id: 123,name: "Home"),new Page(id: 122,name: "Dome")]}
+      Page.all {}, (jsonn) ->
+        expect(JSON.stringify jsonn).toEqual(JSON.stringify expected_object)
+      mostRecentAjaxRequest().response
+        status: 200
+        responseText: JSON.stringify expected_object
+
     it "should create empty list of objects on error", ->
       expected_list = []
       list = Page.all()
