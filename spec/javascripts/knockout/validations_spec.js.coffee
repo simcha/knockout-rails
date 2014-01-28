@@ -74,6 +74,12 @@ describe "Validations", ->
       expect( @subject.name() ).toEqual('')
       expect( @subject.errors.name() ).toBeTruthy()
 
+    it "should make undefined field invalid", ->
+      @subject.name 'valid'
+      @subject.set {multiple: 'd'}
+      expect( @subject.name() ).toEqual(undefined)
+      expect( @subject.errors.name() ).toBeTruthy()
+
 
 
   describe "conditional validations", ->

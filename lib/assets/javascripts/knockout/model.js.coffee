@@ -1,5 +1,4 @@
 #=require jquery
-#=require knockout/ie_hack
 #=require knockout/validations
 #=require knockout/validators
 #=require knockout/ko_extensions
@@ -215,8 +214,6 @@ Ajax =
           # Create or update can be tell from xhr.status: 201=Created, 200 or 204=No Content(updated)
           @trigger('saveSuccess', resp, xhr, status)
 
-        #.always (xhr, status) -> console.info "always: ", this
-
 Relations =
   ClassMethods:
     __add_relation: (kind, fld, model) ->
@@ -358,12 +355,12 @@ class Model extends Module
       for fld, setter of this
         if @constructor.__ignored().indexOf(fld) == -1
           if ko.isObservableArray setter
-            setter([])
+            setter([]) unless json[fld]?
             @errors[fld] ||= ko.observable()
             @errors[fld](undefined)
 
           else if ko.isObservable(setter)
-            setter(undefined)
+            setter(undefined) unless json[fld]?
             @errors[fld] ||= ko.observable()
             @errors[fld](undefined)
 

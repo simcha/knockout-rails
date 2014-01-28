@@ -77,8 +77,6 @@ Validations =
       for key, value of @errors
         unless Object.isEmpty value()
           isValid = false
-          console.log @constructor.name + '.' + key + ': ' + value()
-
       # Check errors of related
       for rel in (@constructor.__relations ||= [])
         accessor = @[rel.fld]
