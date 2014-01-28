@@ -2,7 +2,7 @@
 class Page extends ko.Model
   @fields 'name', 'correct', 'multiple', 'conditional'
 
-  @validates: (me) ->
+  @validates: ->
     @presence 'name'
     @presence 'multiple', 'multiple', 'multiple', message: 'xxx'
 
@@ -24,7 +24,9 @@ describe "Validations", ->
     expect(@subject.isValid()).toBeFalsy()
 
   it "should set error on a field", ->
+    @subject.name 'w'
     @subject.name ''
+
     expect(@subject.errors.name()).toMatch /blank/i
 
   it "should remove error when field becomes valid", ->
@@ -40,8 +42,15 @@ describe "Validations", ->
 
 
   it "should join all the errors", ->
+    @subject.multiple '3214235'
     @subject.multiple ''
     expect(@subject.errors.multiple()).toBe "xxx, xxx, xxx"
+
+  it "should make field invalid on undefined when presence", ->
+      @subject.name 'valid'
+      @subject.name undefined
+      expect( @subject.name() ).toEqual(undefined)
+      expect( @subject.errors.name() ).toBeTruthy()
 
 
   describe "when re-setting JSON", ->
@@ -61,7 +70,8 @@ describe "Validations", ->
 
     it "should make field invalid", ->
       @subject.name 'valid'
-      @subject.set name:''
+      @subject.set name: ''
+      expect( @subject.name() ).toEqual('')
       expect( @subject.errors.name() ).toBeTruthy()
 
 
@@ -70,45 +80,53 @@ describe "Validations", ->
 
     it "should not validate when ONLY returns false", ->
       @subject.only = -> false
+      @subject.conditional 'x'
       @subject.conditional ' '
       expect(@subject.errors.conditional()).toBeFalsy()
 
     it "should validate when ONLY returns true", ->
       @subject.only = -> true
+      @subject.conditional 'x'
       @subject.conditional ' '
       expect(@subject.errors.conditional()).toBeTruthy()
 
 
     it "should not validate when EXCEPT returns true", ->
       @subject.except = -> true
+      @subject.conditional 'x'
       @subject.conditional ' '
       expect(@subject.errors.conditional()).toBeFalsy()
 
     it "should validate when EXCEPT returns false", ->
       @subject.except = -> false
+      @subject.conditional 'x'
       @subject.conditional ' '
       expect(@subject.errors.conditional()).toBeTruthy()
 
     it "should validate when ONLY=true, EXCEPT=false", ->
       @subject.only = -> true
       @subject.except = -> false
+      @subject.conditional 'x'
       @subject.conditional ' '
       expect(@subject.errors.conditional()).toBeTruthy()
 
     it "should not validate when ONLY=true, EXCEPT=true", ->
       @subject.only = -> true
       @subject.except = -> true
+      @subject.conditional 'x'
       @subject.conditional ' '
       expect(@subject.errors.conditional()).toBeFalsy()
 
     it "should not validate when ONLY=false, EXCEPT=true", ->
       @subject.only = -> false
       @subject.except = -> true
+      @subject.conditional 'x'
       @subject.conditional ' '
       expect(@subject.errors.conditional()).toBeFalsy()
 
     it "should not validate when ONLY=false, EXCEPT=false", ->
       @subject.only = -> false
       @subject.except = -> false
+      @subject.conditional 'x'
       @subject.conditional ' '
       expect(@subject.errors.conditional()).toBeFalsy()

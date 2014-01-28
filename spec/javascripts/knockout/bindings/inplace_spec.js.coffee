@@ -5,7 +5,8 @@ describe "In-Place edit", ->
   inplacify = (val) ->
     setFixtures "<input id='el' data-bind='inplace: val' />"
     el = $('#el')
-    ko.applyBindings { val: val or ko.observable() }, @el[0]
+    ko.cleanNode(el[0]);
+    ko.applyBindings { val: val or ko.observable() }, el[0]
     el
 
   it "should hide input initially", ->

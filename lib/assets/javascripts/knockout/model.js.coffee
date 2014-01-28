@@ -347,13 +347,13 @@ class Model extends Module
     if @constructor.fieldsSpecified
       # map only fields
       for fld in @constructor.fieldNames
-        @setField fld, undefined
+        @setField fld, undefined unless json[fld]?
       for rel in (@constructor.__relations ||= [])
         {fld, kind} = rel
         if kind == 'has_many' or kind == 'has_and_belongs_to_many'
-          @setField fld, []
+          @setField fld, [] unless json[fld]?
         else
-          @setField fld, undefined
+          @setField fld, undefined unless json[fld]?
     else
       for fld, setter of this
         if @constructor.__ignored().indexOf(fld) == -1
