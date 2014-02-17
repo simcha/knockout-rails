@@ -425,6 +425,31 @@ class Model extends Module
         @trigger('allSuccess', resp, xhr, status)
 
     return all_list
+
+  @get: (id, observable = null) ->
+    @trigger('beforeGet') # Consider moving it into the beforeSend or similar
+    observable ||= ko.observable()
+    params =
+      type: 'GET'
+      dataType: 'json'
+      beforeSend: (xhr)->
+        token = $('meta[name="csrf-token"]').attr('content')
+        xhr.setRequestHeader('X-CSRF-Token', token) if token
+      url: @getAllUrl()+"/#{id}"
+      contentType: 'application/json'
+      context: this
+    params.data = options if options?
+    $.ajax(params)
+    .fail (xhr, status, errorThrown)->
+        @trigger('getError', errorThrown, xhr, status)
+
+    .done (resp, status, xhr)->
+        if resp?
+          observable new this(resp)
+        @trigger('allSuccess', resp, xhr, status)
+
+    return observable
+
 # Export it all:
 ko.Module = Module
 ko.Model = Model

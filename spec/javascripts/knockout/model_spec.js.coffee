@@ -194,6 +194,22 @@ describe "Model", ->
       expect(Page.beforeAllCall).toBeTruthy()
       expect(Page.allSuccessCall).toBeTruthy()
       expect(Page.allErrorCall).toBeFalsy()
+  describe "Ajax get", ->
+    it "should get object on get", ->
+      expected = new Page(id: 123,name: "Home")
+      page = Page.all(123)
+      mostRecentAjaxRequest().response
+        status: 200
+        responseText: JSON.stringify expected
+      expect(JSON.stringify page()).toEqual(JSON.stringify expected)
+    it "should update the observable given", ->
+      expected = new Page(id: 123,name: "Home")
+      page = ko.observableArray()
+      Page.all(123, page)
+      mostRecentAjaxRequest().response
+        status: 200
+        responseText: JSON.stringify expected
+      expect(JSON.stringify page()).toEqual(JSON.stringify expected)
 
   describe "events", ->
     it "should raise events", ->
